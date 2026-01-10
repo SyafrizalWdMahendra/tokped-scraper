@@ -1,3 +1,4 @@
+# day 1
 target_urls = [
     "https://www.tokopedia.com/distri-laptop/laptop-axioo-hype-1-celeron-4gb-8gb-128gb-14-hd-w11-1731414735794112013/review",
     "https://www.tokopedia.com/foxcomp/obrall-laptop-lenovo-thinkpad-x260-ci5-gen6-8-gb-ssd-256-murah-muluss-core-i5-ram-8-ssd-256-846cc/review",
@@ -6,7 +7,8 @@ target_urls = [
     "https://www.tokopedia.com/dna-com-17/lenovo-thinkpad-x240-x250-x260-x270-x280-x290-i3-i5-i7-second-original-berkualitas-bergaransi-1731365752961468092/review",
 ]
 
-target_15_balanced_urls = [
+# day 2
+d2_target_urls = [
     "https://www.tokopedia.com/agreshpauthorized/hp-245-g10-ryzen-3-7320-8gb-256gb-w11-ohs-14-0-hd-3y-garansi-resmi-1733010085551703202/review",
     "https://www.tokopedia.com/distri-laptop/axioo-hype-3-g11-intel-core-i3-1125g4-ram-8gb-256gb-ssd-14-full-hd-ips-1731414926525761037/review",
     "https://www.tokopedia.com/studioponsel/apple-macbook-air-2022-m2-chip-13-inch-512gb-256gb-ram-8gb-apple-512gb-silver-4eb7c/review",
@@ -46,6 +48,11 @@ target_15_balanced_urls = [
     "https://www.tokopedia.com/toptech/asus-vivobook-go-14-e1404fa-amd-ryzen-3-7320u-8gb-512gb-ssd-w11-ohs-14-0fhd-1731200419434497140/review",
     "https://www.tokopedia.com/gugellaptop/thinkpad-x390-thinkpad-x390-thinkpad-x390-x390-1731544112072983842/review",
     "https://www.tokopedia.com/ismile-indonesia/apple-macbook-air-m4-chip-2024-13-10-10core-10-8core-ssd-256gb-512gb-ram-16gb-24gb-1732667206971852683/review",
+ 
+]
+
+# day 3
+d3_target_urls= [
     "https://www.tokopedia.com/studioponsel/apple-macbook-air-m3-2024-13-inch-512gb-256gb-ram-16gb-1730958539678254399/review",
     "https://www.tokopedia.com/collinsofficial/asus-vivobook-go-14-e1404ga-i3-n305-8gb-ssd-256-512gb-14-fhd-w11-ohs-ssd-256gb-7d4bd/review",
     "https://www.tokopedia.com/axiooslimbook/laptop-axioo-hype-10-n4020-8gb-256gb-windows-10-pro-normal-dos-11f61/review",
@@ -59,5 +66,33 @@ target_15_balanced_urls = [
     "https://www.tokopedia.com/intelstore-id/laptop-lenovo-v14-g4-iru-core-i3-1315u-8gb-256ssd-14-fhd-w11-1733386294732096938/review",
     "https://www.tokopedia.com/amd-id/asus-vivobook-14-m1405ya-ryzen-7-7730u-16gb-512gb-w11-ohs-14-0wuxga-vips-1729896393440265595/review",
     "https://www.tokopedia.com/gitechlaptop/laptop-lenovo-thinkpad-t470-t480-t490-t14-core-i7-ram-32gb-ssd-1tb-laptop-1730881799003735695/review"
-
+    "https://www.tokopedia.com/dwicompany/apple-macbook-air-m3-8gb-16gb-24gb-2024-256gb-512gb-1tb-13-15-inch-1732537202757829644/review",
+    "https://www.tokopedia.com/amd-id/asus-vivobook-go-15-e1504fa-ryzen-5-7520-16gb-512gb-w11-ohs-m365b-15-6fhd-1732291174656214395/review",
+    "https://www.tokopedia.com/teknotrend/laptop-asus-vivobook-go-14-e1404fa-amd-ryzen-3-7320u-8gb-256gb-512gb-14-fhd-1731262196135397314/review",
+    "https://www.tokopedia.com/hp/laptop-hp-intel-core-i3-uhd-4gb-8gb-ram-512gb-ssd-silver-windows-11-home-14-inch-garansi-2-tahun-official-1732138607355594627/review",
+    "https://www.tokopedia.com/collinsofficial/lenovo-ideapad-slim-3-i3-1315u-ram-8gb-256gb-512gb-ssd-14-fhd-w11-ohs-1732497278775755975/review",
+    "https://www.tokopedia.com/digitalisme/apple-macbook-air-m4-2025-13-inch-24-512gb-16-512gb-10-core-gpu-16-256gb-8-core-gpu-resmi-1733446914166195409/review",
+    "https://www.tokopedia.com/bigberry888/apple-macbook-pro-m2-m3-14-16-inch-512gb-1tb-ram-16gb-32gb-18gb-36gb-48gb-1732954912362431974/review",
+    "https://www.tokopedia.com/collinsofficial/lenovo-ideapad-slim-3-i5-13420h-8gb-16gb-ddr5-512gb-ssd-14-wuxga-w11-ohs-1731203948778456263/review",
+    "https://www.tokopedia.com/thinkpadofficial/lenovo-ideapad-slim-3i-14iru8-core-i3-1315u-8gb-512ssd-windows-11-ohs-14-inch-fhd-laptop-intel-5pid-1732471246595851658/review",
+    "https://www.tokopedia.com/toptech/lenovo-v14-g5-irl-core-i3-1315-16gb-512gb-ssd-14-0fhd-w11-1731363639737484404/review",
+    "https://www.tokopedia.com/onestopgaming/laptop-axioo-hype-1-intel-celeron-n4020-ram-4gb-8gb-ssd-128gb-14-hd-windows-11-1731304931508651266/review",
+    "https://www.tokopedia.com/agreshpauthorized/hp-14-ryzen-5-7530-8gb-512gb-w11-ohs-m365b-14-0fhd-ips-blit-2y-gld-em0531au-1732302025059697826/review",
+    "https://www.tokopedia.com/gugellaptop/thinkpad-t495-ryzen-7-pro-3700u-16gb-512gb-vega-2gb-thinkpad-t495-1730790073994217447/review",
+    "https://www.tokopedia.com/teknotrend/laptop-axioo-mybook-hype-3-g11-intel-i3-1125g4-8gb-256gb-14-fhd-ips-1731298731986487234/review",
+    "https://www.tokopedia.com/royalltech/laptop-lenovo-ideapad-slim-3-14-intel-celeron-n4500-n100-ram-8gb-ssd-512gb-windows-11-office-fhd-laptop-consumer-murah-cepat-ringan-ssd-kencang-ram-besar-anti-panas-cocok-untuk-office-kuliah-zoom-netflix-editing-kerja-harian-1733020603418314231/review",
+    "https://www.tokopedia.com/sinarmulia/lenovo-ideapad-slim-3i-i3-1315u-256gb-ssd-8gb-win11-ohs-1731146440050247455/review",
+    "https://www.tokopedia.com/collinsofficial/asus-vivobook-go-14-e1404ga-i3-n305-8gb-ssd-256-512gb-14-fhd-w11-ohs-1731003949706151111/review",
+    "https://www.tokopedia.com/tokohapedia-idn/apple-macbook-air-m2-chip-2022-13-256gb-512gb-midnight-silver-inter-256-midnight/review",
+    "https://www.tokopedia.com/lenovo-official/lenovo-v14-g4-iru-core-core-i3-1315u-8gb-512gb-w11-ohs-1733870723701310624/review",
+    "https://www.tokopedia.com/electrocom/lenovo-thinkpad-x280-touchscreen-i5-gen8-ram-16gb-512gb-ultrabook-1733657196012995842/review",
+    "https://www.tokopedia.com/kaitocorner/laptop-lenovo-thinkpad-t480-t480s-core-i5-i7-gen-8-layar-14-inch-1733712642338227987/review",
+    "https://www.tokopedia.com/amd-id/asus-expertbook-pm1403cda-ryzen-7-7735hs-16gb-512gb-w11-ohs-m365b-140-fhd-ips-1731712946619385211/review",
+    "https://www.tokopedia.com/gameridos/asus-vivobook-go-e410ka-n4500-ram-8gb-ssd-512gb-windows-11-ohs-m365b-14-0fhd-rose-pink-fhd4852m-1731601832835450465/review",
+    "https://www.tokopedia.com/redstarelectronic/lenovo-thinkpad-t480s-core-i7-8650u-24gb-ram-512gb-nvme-ssd-tc-full-hd-windows-11-1729822537494135859/review",
+    "https://www.tokopedia.com/royalltech/laptop-lenovo-ideapad-slim-3-x-thinkpad-v14-i3-1315u-ram-8gb-512gb-ssd-layar-14-fhd-windows-11-ohs-laptop-kuliah-laptop-kerja-laptop-tahan-banting-1733205589272462839/review",
+    "https://www.tokopedia.com/toptech/hp-pavilion-aero-13-bg0111au-i-bg0222au-amd-ryzen-5-8640u-16gb-512gb-ssd-13-3-wuxga-ips-w11-ohs-1731216357464179828/review",
+    "https://www.tokopedia.com/teknotrend/laptop-hp-14-ep0260tu-14-ep0261tu-core-i3-1315u-8gb-512gb-14-fhd-intel-uhd-graphics-w11-ohs-1733882228962330562/review",
+    "https://www.tokopedia.com/spacetech/acer-aspire-lite-al14-i3-n355-8gb-512gb-ssd-14-wuxga-ips-win11-ohs-1731233517590382201/review",
+    ""
 ]
