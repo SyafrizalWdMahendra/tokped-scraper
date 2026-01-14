@@ -3,7 +3,7 @@ import pandas as pd
 # 1. Baca kedua file
 df_lama = pd.read_csv('dataset_fix.csv')      # File yang isinya positif semua
 # File hasil scrap filter bintang 1-3
-df_baru = pd.read_csv('dataset_fix_balanced.csv')
+df_baru = pd.read_csv('dataset_balanced.csv')
 
 # 2. Cek Kolom (Wajib Sama Persis)
 print("Kolom File Lama:", df_lama.columns.tolist())
@@ -23,5 +23,5 @@ print("\n=== Komposisi Data Final ===")
 print(df_gabungan['Sentiment'].value_counts())
 
 # 6. Simpan jadi Master Dataset
-df_gabungan.to_csv('MASTER_DATASET_FINAL.csv', index=False)
-print("Sukses! File tersimpan sebagai MASTER_DATASET_FINAL.csv")
+df_gabungan.to_csv('final_dataset.csv', index=False)
+print("Sukses! File tersimpan sebagai final_dataset.csv")

@@ -88,7 +88,7 @@ def manual_harvest_v2(keywords, pages=5):
     return list(set(collected_urls))
 
 if __name__ == "__main__":
-    keyword = "laptop lenovo thinkpad"
+    keyword = "laptop asus zenbook"
     kw_format = keyword.replace(" ", "%20")
     
     final_urls = manual_harvest_v2(kw_format, pages=2)
@@ -96,8 +96,8 @@ if __name__ == "__main__":
     print(f"\n{'='*30}")
     if final_urls:
         df = pd.DataFrame(final_urls, columns=["url"])
-        df.to_csv("target_urls.csv", index=False)
-        print(f"✅ SUKSES PANEN! {len(final_urls)} URL tersimpan di target_urls.csv")
+        df.to_csv("target_urls_2.csv", index=False)
+        print(f"✅ SUKSES PANEN! {len(final_urls)} URL tersimpan di target_urls_2.csv")
         print("Contoh URL:", final_urls[0])
     else:
         print("❌ Masih 0 URL. Cek file debug_error.html jika ada.")
