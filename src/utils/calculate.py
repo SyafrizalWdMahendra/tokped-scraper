@@ -4,9 +4,9 @@ import os
 
 def check_sentiment_counts():
     # 1. Konfigurasi Nama File
-    file_utama = 'dataset_fix.csv'          # File lama (mayoritas positif)
+    file_utama = 'data/dataset/dataset_fix.csv'          # File lama (mayoritas positif)
     # File baru (hasil filter bintang 1-3)
-    file_baru = 'dataset_balanced.csv'
+    file_baru = 'data/dataset/dataset_balanced.csv'
 
     dfs = []  # List untuk menampung dataframe agar bisa dihitung totalnya nanti
 
