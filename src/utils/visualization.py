@@ -8,10 +8,10 @@ import numpy as np
 scenarios = ['Skenario 1\n(Baseline)', 'Skenario 2\n(Tuned)', 'Skenario 3\n(SMOTE + Opt)']
 
 # Data Metrik (Salin dari Classification Report Anda)
-accuracy   = [0.80, 0.81, 0.81] # Akurasi Global
-macro_f1   = [0.56, 0.58, 0.60] # Keseimbangan Model
-f1_negatif = [0.61, 0.65, 0.64] # Kemampuan Deteksi Komplain
-f1_netral  = [0.16, 0.17, 0.24] # Kemampuan Deteksi Ambigu
+accuracy   = [0.80, 0.81, 0.82] # Akurasi Global
+macro_f1   = [0.56, 0.58, 0.61] # Keseimbangan Model
+f1_negatif = [0.61, 0.65, 0.65] # Kemampuan Deteksi Komplain
+f1_netral  = [0.16, 0.17, 0.27] # Kemampuan Deteksi Ambigu
 
 # ==========================================
 # 2. KONFIGURASI PLOT
