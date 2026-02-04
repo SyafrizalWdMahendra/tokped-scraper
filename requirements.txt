@@ -1,3 +1,10 @@
 beautifulsoup4==4.12.3
 pandas==2.2.3
 selenium==4.25.0
+matplotlib
+wordcloud
+numpy
+scikit-learn
+imbalanced-learn
+PySastrawi
+joblib
