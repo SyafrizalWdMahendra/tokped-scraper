@@ -11,8 +11,8 @@ Proyek ini merupakan implementasi *end-to-end* analisis sentimen ulasan produk T
 - **Indonesian NLP Pipeline**: Pembersihan data, *case folding*, filtering, hingga *stemming* menggunakan Sastrawi.
 - **Tiga Skenario Eksperimen**:
   - **Skenario 1**: Baseline (TF-IDF + XGBoost).
-  - **Skenario 2**: Seleksi Fitur (Chi-Square + XGBoost).
-  - **Skenario 3**: Penanganan Imbalance Data (SMOTE + XGBoost).
+  - **Skenario 2**: Seleksi Fitur (Grid Search + XGBoost).
+  - **Skenario 3**: Penanganan Imbalance Data (SMOTE + Chi-Square + Grid Search +  XGBoost).
 - **Model Persistence**: Model disimpan dalam format `.pkl` untuk digunakan kembali tanpa melatih ulang.
 
 ## 📂 Struktur Repositori
