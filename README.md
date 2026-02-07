@@ -19,6 +19,7 @@ Proyek ini merupakan implementasi *end-to-end* analisis sentimen ulasan produk T
 ```text
 ├── data/                  # Koleksi dataset (Raw, Clean, Balanced) dan pkl files
 ├── models/                # Hasil training model (.pkl) untuk tiap skenario
+├── public/                # Berkas gambar visualisasi data latih
 ├── src/
 │   ├── mining/            # Script untuk scraping data Tokopedia
 │   ├── flow_1/            # Implementasi eksperimen skenario 1
@@ -26,4 +27,3 @@ Proyek ini merupakan implementasi *end-to-end* analisis sentimen ulasan produk T
 │   ├── flow_3/            # Implementasi eksperimen skenario 3 (SMOTE & Pipeline)
 │   └── utils/             # Helper fungsi (preprocessing, visualisasi, TF-IDF)
 ├── requirements.txt       # Daftar library Python yang dibutuhkan
-└── grafik_perbandingan.png # Hasil visualisasi performa model
