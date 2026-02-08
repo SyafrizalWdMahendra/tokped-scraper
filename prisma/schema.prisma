@@ -1,0 +1,133 @@
+generator client {
+  provider = "prisma-client-py"
+  interface = "asyncio"
+  recursive_type_depth = 5
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+enum UserGender {
+  male
+  female
+  other
+}
+
+enum Sentiment {
+  positive
+  negative
+  neutral
+}
+
+model Account {
+  id                 Int    @id @default(autoincrement())
+  userId             Int
+  type               String
+  provider           String
+  providerAccountId  String
+  refresh_token      String?
+  access_token       String?
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String?
+  session_state      String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           Int      @id @default(autoincrement())
+  sessionToken String   @unique
+  userId       Int
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+
+model User {
+  id            Int    @id @default(autoincrement())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  gender        UserGender?
+  productReference String?
+  password      String? 
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  accounts      Account[]
+  sessions      Session[]
+  analysis      Analysis[]
+}
+
+model Analysis {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  reviewId  Int
+  productId Int
+  modelId   Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user    User    @relation(fields: [userId], references: [id])
+  review  Review  @relation(fields: [reviewId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
+  model   Model   @relation(fields: [modelId], references: [id])
+}
+
+model Product {
+  id        Int      @id @default(autoincrement())
+  name      String
+  brand     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  reviews  Review[]
+  analysis Analysis[]
+}
+
+model Review {
+  id              Int       @id @default(autoincrement())
+  productId       Int
+  modelId         Int
+  content         String
+  keywords        String[]
+  sentiment       Sentiment
+  confidenceScore Float
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  product  Product    @relation(fields: [productId], references: [id])
+  model  Model    @relation(fields: [modelId], references: [id])
+  analysis Analysis[]
+}
+
+model Model {
+  id          Int      @id @default(autoincrement())
+  modelName   String
+  description String
+  accuracy    Float
+  macroF1     Float
+  f1Negative  Float
+  f1Neutral   Float
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  analysis Analysis[]
+  review Review[]
+}
