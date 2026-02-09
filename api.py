@@ -1,6 +1,5 @@
 import sys
 import joblib
-import asyncio
 import numpy as np
 from pathlib import Path
 from fastapi import FastAPI, HTTPException, BackgroundTasks
@@ -9,11 +8,16 @@ from prisma import Prisma
 from prisma.enums import Sentiment
 from Sastrawi.Stemmer.StemmerFactory import StemmerFactory
 from Sastrawi.StopWordRemover.StopWordRemoverFactory import StopWordRemoverFactory
+from fastapi.middleware.cors import CORSMiddleware
 
-# ==========================================
-# 1. KONFIGURASI
-# ==========================================
 app = FastAPI(title="Tokopedia Sentiment Analysis API")
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 prisma = Prisma()
 
 BASE_DIR = Path(__file__).resolve().parent
