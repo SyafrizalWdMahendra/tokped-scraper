@@ -38,7 +38,6 @@ label_encoder = None
 stemmer = None
 stopword = None
 
-# Mapping Keyword per Profesi (Fitur Utama)
 PROFESSION_KEYWORDS = {
     "programmer": [
         # Core Tech
@@ -85,13 +84,13 @@ SENTIMENT_MAP_RAW = {
 # ==========================================
 # 2. DATA MODELS (INPUT/OUTPUT)
 # ==========================================
-
 class ProductCandidate(BaseModel):
     name: str
     url: str
     reviews: List[str] 
 
 class RecommendationRequest(BaseModel):
+    user_email: str
     profession: str 
     candidates: List[ProductCandidate]
 
@@ -107,6 +106,7 @@ class ProductAnalysisResult(BaseModel):
     verdict: str  
 
 class ComparisonResponse(BaseModel):
+    user_email: str
     profession_target: str
     winning_product: str
     details: List[ProductAnalysisResult]
@@ -171,13 +171,43 @@ def extract_keywords_batch(texts: List[str], vectorizer_model, top_n=5) -> List[
 # ==========================================
 # 4. CORE LOGIC (WEIGHTED ANALYSIS)
 # ==========================================
-async def process_product_reviews(candidate: ProductCandidate, profession: str):
+async def process_product_reviews(candidate: ProductCandidate, profession: str, user_email: str):
     keywords_target = PROFESSION_KEYWORDS.get(profession.lower(), [])
     
     print(f"🔍 Analisis untuk {candidate.name[:20]}... | Profesi: {profession} | Target Keywords: {len(keywords_target)}")
 
+    # ==========================================
+    # 1. DATABASE FETCHING & CREATION (PRODUCT & MODEL)
+    # ==========================================
+    model_db = await prisma.model.find_first(
+        where={"modelName": "Model XGBoost (Baseline)"}
+    )
+    if not model_db:
+        print("❌ ERROR: Model tidak ditemukan di DB!")
+        return None
+    model_id = model_db.id
+
+    product_db = await prisma.product.find_first(
+        where={"url": candidate.url}
+    )
+
+    if product_db:
+        print(f"📦 Produk ditemukan di DB: {product_db.name}")
+    else:
+        guessed_brand = candidate.name.split()[0] if candidate.name else "Unknown"
+        
+        product_db = await prisma.product.create(
+            data={
+                "name": candidate.name,
+                "url": candidate.url,
+                "brand": guessed_brand 
+            }
+        )
+        print(f"➕ Produk BARU berhasil dibuat di DB: {product_db.name}")
+
     processed_reviews = []
     positive_reviews_text = [] 
+    reviews_data_to_save = [] 
     
     total_reviews = len(candidate.reviews)
     if total_reviews == 0:
@@ -185,21 +215,26 @@ async def process_product_reviews(candidate: ProductCandidate, profession: str):
 
     pos_count = 0
     neg_count = 0
-    
-    # Variabel Skor Profesi
     profession_relevant_count = 0 
     profession_pos_score = 0      
 
+    # ==========================================
+    # 2. PROSES NLP & PREDIKSI (LOOP REVIEW)
+    # ==========================================
     for raw_text in candidate.reviews:
-        # Preprocessing
-        clean_text = preprocess_text(raw_text) # Hasil stemming: "keyboard enak ketik"
-        original_lower = raw_text.lower()      # Asli lowercase: "keyboardnya enak buat ngetik"
+        clean_text = preprocess_text(raw_text) 
+        original_lower = raw_text.lower()      
         
-        # Vectorize & Predict
         vec = vectorizer.transform([clean_text])
         pred_idx = model_optimized.predict(vec)[0]
         label = label_encoder.inverse_transform([pred_idx])[0].lower()
         
+        try:
+            probas = model_optimized.predict_proba(vec)[0]
+            confidence_score = float(max(probas))
+        except:
+            confidence_score = 1.0
+
         is_positive = label == "positif"
         
         if is_positive:
@@ -208,48 +243,80 @@ async def process_product_reviews(candidate: ProductCandidate, profession: str):
         elif label == "negatif":
             neg_count += 1
             
-        # --- LOGIKA PENCOCOKAN YANG LEBIH PINTAR ---
-        # Kita cek apakah ada keyword profesi di clean_text ATAU original_lower
         matched_keywords = []
         for k in keywords_target:
-            # Cek substring (misal "ketik" ada di "ngetik")
             if k in clean_text or k in original_lower:
                 matched_keywords.append(k)
         
-        # Jika ditemukan setidaknya satu keyword relevan
         if len(matched_keywords) > 0:
             profession_relevant_count += 1
             if is_positive:
                 profession_pos_score += 1
-                # Bonus skor jika keyword ditemukan lebih dari 1 dalam satu review
                 if len(matched_keywords) > 1:
                     profession_pos_score += 0.2 
 
-    # --- HITUNG SKOR AKHIR ---
+        if product_db:
+            sentiment_enum_map = {
+                "positif": Sentiment.POSITIVE,
+                "negatif": Sentiment.NEGATIVE,
+                "netral": Sentiment.NEUTRAL
+            }
+            prisma_sentiment = sentiment_enum_map.get(label, Sentiment.NEUTRAL)
+
+            reviews_data_to_save.append({
+                "content": raw_text,
+                "sentiment": prisma_sentiment,
+                "confidenceScore": confidence_score,
+                "keywords": matched_keywords,
+                "productId": product_db.id,
+                "modelId": model_id
+            })
+
+    if reviews_data_to_save and product_db:
+        try:
+            await prisma.review.delete_many(where={"productId": product_db.id})
+            await prisma.review.create_many(data=reviews_data_to_save)
+            print(f"✅ Tersimpan {len(reviews_data_to_save)} review ke DB.")
+        except Exception as e:
+            print(f"❌ Gagal menyimpan review: {e}")
+
     general_score = (pos_count / total_reviews) * 100
     
-    # Logic Compatibility Score Baru
     if profession_relevant_count > 0:
-        # Jika ada review yang relevan, hitung persentase positifnya
         raw_comp_score = (profession_pos_score / profession_relevant_count) * 100
-        # Cap di 100
         comp_score = min(raw_comp_score, 100.0)
     else:
-        # FALLBACK: Jika tidak ada satupun review yang nyebut keyword profesi,
-        # kita pakai General Score tapi dikurangi sedikit (penalti ketidakpastian)
         comp_score = general_score * 0.85 
 
-    # Tentukan Verdict
     if comp_score > 85: verdict = "Sangat Cocok"
     elif comp_score > 65: verdict = "Cocok"
     elif comp_score > 40: verdict = "Cukup"
     else: verdict = "Kurang Disarankan"
 
-    # Extract Top Keywords (Hanya dari review positif)
     top_kwd = extract_keywords_batch(positive_reviews_text, vectorizer, top_n=5)
 
-    # Tambahkan keyword profesi yang sering muncul ke list keyword agar user tahu alasannya
-    # (Opsional: logic tambahan untuk menampilkan match keyword)
+    user_db = await prisma.user.find_unique(
+        where={"email": user_email}
+    )
+    if not user_db:
+        print(f"⚠️ Peringatan: User dengan email {user_email} tidak ditemukan. Riwayat tidak disimpan.")
+    else:
+        try:
+            await prisma.analysis.create(
+                data={
+                    "targetProfession": profession,
+                    "generalSentiment": round(general_score, 1),
+                    "compatibilityScore": round(comp_score, 1),
+                    "verdict": verdict,
+                    "topKeywords": top_kwd, 
+                    "userId": user_db.id,
+                    "productId": product_db.id,
+                    "modelId": model_id
+                }
+            )
+            print(f"📊 Riwayat Analisis berhasil disimpan untuk {candidate.name[:15]}!")
+        except Exception as e:
+            print(f"❌ Gagal menyimpan data ke tabel Analysis: {e}")
 
     return ProductAnalysisResult(
         name=candidate.name,
@@ -262,13 +329,14 @@ async def process_product_reviews(candidate: ProductCandidate, profession: str):
         top_keywords=top_kwd,
         verdict=verdict
     )
+
 # ==========================================
 # 5. ENDPOINT UTAMA
 # ==========================================
 @app.post("/recommend", response_model=ComparisonResponse)
 async def recommend_laptop(request: RecommendationRequest):
     """
-    Menerima list produk dan profesi.
+    Menerima list produk dan profesi beserta email user.
     Mengembalikan hasil analisis komparasi.
     """
     if not model_optimized:
@@ -276,9 +344,9 @@ async def recommend_laptop(request: RecommendationRequest):
 
     results = []
     
-    # Proses setiap kandidat produk
+    # Proses setiap kandidat produk dengan melempar user_email
     for candidate in request.candidates:
-        result = await process_product_reviews(candidate, request.profession)
+        result = await process_product_reviews(candidate, request.profession, request.user_email)
         if result:
             results.append(result)
 
@@ -290,6 +358,7 @@ async def recommend_laptop(request: RecommendationRequest):
     winner = sorted_results[0]
 
     return {
+        "user_email": request.user_email,
         "profession_target": request.profession,
         "winning_product": winner.name,
         "details": results

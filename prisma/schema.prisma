@@ -9,34 +9,54 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 enum UserGender {
-  male
-  female
-  other
+  MALE
+  FEMALE
+  OTHER
 }
 
 enum Sentiment {
-  positive
-  negative
-  neutral
+  POSITIVE
+  NEGATIVE
+  NEUTRAL
+}
+
+enum OS {
+  WINDOWS
+  MACOS
+  LINUX
+  CHROME_OS
+  OTHER
+}
+
+enum Brand {
+  APPLE
+  ASUS
+  ACER
+  LENOVO
+  HP
+  DELL
+  MSI
+  AXIOO
+  ADVAN
+  ZYREX
+  OTHER
 }
 
 model Account {
-  id                 Int    @id @default(autoincrement())
-  userId             Int
-  type               String
-  provider           String
-  providerAccountId  String
-  refresh_token      String?
-  access_token       String?
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String?
-  session_state      String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                Int     @id @default(autoincrement())
+  userId            Int
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
@@ -46,8 +66,7 @@ model Session {
   sessionToken String   @unique
   userId       Int
   expires      DateTime
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model VerificationToken {
@@ -58,76 +77,107 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
-
 model User {
-  id            Int    @id @default(autoincrement())
+  id            Int       @id @default(autoincrement())
   name          String?
   email         String?   @unique
   emailVerified DateTime?
   image         String?
-  gender        UserGender?
-  productReference String?
-  password      String? 
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  accounts      Account[]
-  sessions      Session[]
-  analysis      Analysis[]
-}
+  password      String?
+  bio           String?   @db.Text
 
-model Analysis {
-  id        Int      @id @default(autoincrement())
-  userId    Int
-  reviewId  Int
-  productId Int
-  modelId   Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  user    User    @relation(fields: [userId], references: [id])
-  review  Review  @relation(fields: [reviewId], references: [id])
-  product Product @relation(fields: [productId], references: [id])
-  model   Model   @relation(fields: [modelId], references: [id])
+  accounts Account[]
+  sessions Session[]
+  analyses Analysis[]
+
+  preference UserPreference?
+}
+
+model UserPreference {
+  id            Int     @id @default(autoincrement())
+  profession    String?
+  preferredOS   OS?
+  preferedBrand Brand?
+  budgetMin     Int?
+  budgetMax     Int?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId Int  @unique
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Product {
-  id        Int      @id @default(autoincrement())
-  name      String
-  brand     String
+  id    Int     @id @default(autoincrement())
+  name  String
+  brand String?
+  url   String  @unique
+  image String?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   reviews  Review[]
-  analysis Analysis[]
+  analyses Analysis[]
 }
 
 model Review {
   id              Int       @id @default(autoincrement())
-  productId       Int
-  modelId         Int
   content         String
-  keywords        String[]
   sentiment       Sentiment
   confidenceScore Float
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  keywords        String[]
 
-  product  Product    @relation(fields: [productId], references: [id])
-  model  Model    @relation(fields: [modelId], references: [id])
-  analysis Analysis[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  productId Int
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  modelId Int?
+  model   Model? @relation(fields: [modelId], references: [id])
+}
+
+model Analysis {
+  id Int @id @default(autoincrement())
+
+  targetProfession String
+
+  generalSentiment   Float
+  compatibilityScore Float
+  verdict            String
+
+  topKeywords String[]
+
+  createdAt DateTime @default(now())
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  productId Int
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  modelId Int
+  model   Model @relation(fields: [modelId], references: [id])
 }
 
 model Model {
-  id          Int      @id @default(autoincrement())
+  id          Int     @id @default(autoincrement())
   modelName   String
-  description String
-  accuracy    Float
-  macroF1     Float
-  f1Negative  Float
-  f1Neutral   Float
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  description String?
 
-  analysis Analysis[]
-  review Review[]
+  accuracy   Float
+  macroF1    Float
+  f1Negative Float
+  f1Neutral  Float
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  analyses Analysis[]
+  reviews  Review[]
 }
