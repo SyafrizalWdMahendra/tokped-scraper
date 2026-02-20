@@ -41,9 +41,8 @@ try:
     print(test[col_sentiment].value_counts())
     print(f"Proporsi Uji: {len(test)/len(df_clean):.2%}")
     
-    # 5. Simpan ke CSV Fisik
-    train.to_csv('data_train_80/2.csv', index=False)
-    test.to_csv('data_test_20/2.csv', index=False)
+    train.to_csv('data_train_80.csv', index=False)
+    test.to_csv('data_test_20.csv', index=False)
     
     print("\n" + "="*30)
     print("SUKSES! Dua file telah dibuat:")
