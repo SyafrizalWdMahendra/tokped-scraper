@@ -8,14 +8,17 @@ from sklearn.feature_selection import SelectKBest, chi2
 base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 
 # Input (Kita butuh Data Train hasil SMOTE dan Data Test asli)
-input_X_train = 'data/smote/X_train_smote.pkl'
-input_y_train = 'data/smote/y_train_smote.pkl'
-input_X_test  = 'data/tokenize/test/X_test_tfidf.pkl' # Test set asli (belum diapa-apakan selain TFIDF)
+input_X_train = 'new_X_train_smote.pkl'
+input_y_train = 'new_y_train_smote.pkl'
+input_X_test  = 'X_test_tfidf.pkl' # Test set asli (belum diapa-apakan selain TFIDF)
 
 # Output
-output_X_train = 'data/chi2/X_train_chi2.pkl'
-output_X_test  = 'data/chi2/X_test_chi2.pkl'
-output_selector = 'data/chi2/chisquare_selector.pkl' # Simpan logikanya
+# output_X_train = 'data/chi2/X_train_chi2.pkl'
+# output_X_test  = 'data/chi2/X_test_chi2.pkl'
+# output_selector = 'data/chi2/chisquare_selector.pkl' # Simpan logikanya
+output_X_train = 'X_train_chi2.pkl'
+output_X_test  = 'X_test_chi2.pkl'
+output_selector = 'chisquare_selector.pkl' # Simpan logikanya
 
 # JUMLAH FITUR YANG INGIN DIAMBIL (Parameter K)
 # Silakan ubah angka ini. 1000 adalah angka start yang bagus untuk Skripsi S1.

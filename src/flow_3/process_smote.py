@@ -11,12 +11,12 @@ import os
 base_dir = os.path.dirname(os.path.abspath(__file__))
 
 # Input files (hasil dari TF-IDF sebelumnya)
-input_X = './data/tokenize/train/X_train_tfidf.pkl'
-input_y = './data/tokenize/train/y_train.pkl'
+input_X = 'X_train_tfidf.pkl'
+input_y = 'y_train.pkl'
 
 # Output files (hasil SMOTE)
-output_X = './data/smote/X_train_smote.pkl'
-output_y = './data/smote/y_train_smote.pkl'
+output_X = 'new_X_train_smote.pkl'
+output_y = 'new_y_train_smote.pkl'
 
 print("--- MEMULAI PROSES SMOTE (Skenario 3) ---")
 

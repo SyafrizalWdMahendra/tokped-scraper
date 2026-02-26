@@ -6,8 +6,8 @@ from sklearn.preprocessing import LabelEncoder
 # ==========================================
 # KONFIGURASI
 # ==========================================
-file_train = 'data/train/data_train_80.csv'
-file_test = 'data/test/data_test_20.csv'
+file_train = 'data_train_80.csv'
+file_test = 'data_test_20.csv'
 col_text = 'Cleaned_Review'  # Pastikan nama kolom teks sesuai
 col_label = 'Sentiment'      # Pastikan nama kolom label sesuai
 

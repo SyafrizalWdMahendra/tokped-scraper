@@ -16,11 +16,15 @@ PROJECT_ROOT = SCRIPT_DIR.parents[1]
 DATA_DIR = PROJECT_ROOT / "data"
 
 PATHS = {
-    "X_train": DATA_DIR / "chi2" / "X_train_chi2.pkl",
-    "y_train": DATA_DIR / "smote" / "y_train_smote.pkl",
-    "X_test":  DATA_DIR / "chi2" / "X_test_chi2.pkl",
-    "y_test":  DATA_DIR / "tokenize" / "test" / "y_test.pkl",
-    "le":      DATA_DIR / "tokenize" / "label_encoder.pkl",
+    # Ambil file TF-IDF murni (yang fiturnya masih ribuan)
+    "X_train": PROJECT_ROOT / "X_train_tfidf.pkl", 
+    "y_train": PROJECT_ROOT / "y_train.pkl", 
+    
+    # Ambil file Test TF-IDF murni
+    "X_test": PROJECT_ROOT / "X_test_tfidf.pkl",
+    "y_test": PROJECT_ROOT / "y_test.pkl",
+    
+    "le": PROJECT_ROOT / "label_encoder.pkl",
 }
 
 print("--- MENYIAPKAN TRAINING SCENARIO 3 (OPTIMIZED) ---")
@@ -119,7 +123,7 @@ print(confusion_matrix(y_test_label, y_pred_label))
 MODEL_DIR = PROJECT_ROOT / "models"
 MODEL_DIR.mkdir(exist_ok=True)
 
-model_path = MODEL_DIR / "xgboost_scenario3.pkl"
+model_path = MODEL_DIR / "new_xgboost_scenario3.pkl"
 joblib.dump(best_model, model_path)
 
 print(f"\n💾 Model terbaik disimpan ke: {model_path}")

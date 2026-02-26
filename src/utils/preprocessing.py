@@ -3,7 +3,7 @@ from Sastrawi.Stemmer.StemmerFactory import StemmerFactory
 from Sastrawi.StopWordRemover.StopWordRemoverFactory import StopWordRemoverFactory
 
 # 1. Load Data
-df = pd.read_csv('final_dataset.csv')
+df = pd.read_csv('new_final_dataset.csv')
 
 # Hapus data kosong (ada 6 baris kosong di Cleaned_Review hasil cek tadi)
 df = df.dropna(subset=['Cleaned_Review'])

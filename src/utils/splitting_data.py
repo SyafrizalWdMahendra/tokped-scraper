@@ -3,7 +3,7 @@ from sklearn.model_selection import train_test_split
 
 # 1. Load Data
 # Pastikan nama file sesuai dengan file gabungan terakhir Anda
-nama_file = 'data/dataset/final_dataset.csv' 
+nama_file = 'dataset_fix_preprocessed.csv' 
 print(f"--- Membaca file: {nama_file} ---")
 
 try:
