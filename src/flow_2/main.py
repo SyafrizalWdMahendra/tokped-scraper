@@ -17,13 +17,22 @@ print(f"--- INFO PATH SCENARIO 2 ---")
 print(f"Project Root: {PROJECT_ROOT}")
 print(f"Data Dir:     {DATA_DIR}")
 
+# PATHS = {
+#     "X_train": DATA_DIR / "tokenize" / "train" / "X_train_tfidf.pkl", 
+#     "y_train": DATA_DIR / "tokenize" / "train" / "y_train.pkl",
+#     "X_test":  DATA_DIR / "tokenize" / "test" / "X_test_tfidf.pkl",
+#     "y_test":  DATA_DIR / "tokenize" / "test" / "y_test.pkl",
+#     "le":      DATA_DIR / "tokenize" / "label_encoder.pkl",
+# }
+
 PATHS = {
-    "X_train": DATA_DIR / "tokenize" / "train" / "X_train_tfidf.pkl", 
-    "y_train": DATA_DIR / "tokenize" / "train" / "y_train.pkl",
-    "X_test":  DATA_DIR / "tokenize" / "test" / "X_test_tfidf.pkl",
-    "y_test":  DATA_DIR / "tokenize" / "test" / "y_test.pkl",
-    "le":      DATA_DIR / "tokenize" / "label_encoder.pkl",
+    "X_train": PROJECT_ROOT / "X_train_tfidf.pkl", 
+    "y_train": PROJECT_ROOT / "y_train.pkl",
+    "X_test":  PROJECT_ROOT / "X_test_tfidf.pkl",
+    "y_test":  PROJECT_ROOT / "y_test.pkl",
+    "le":      PROJECT_ROOT / "label_encoder.pkl",
 }
+
 # ==========================================
 # 2. LOAD DATA
 # ==========================================
@@ -118,6 +127,6 @@ print("\nConfusion Matrix:")
 print(confusion_matrix(y_test_label, y_pred_label))
 
 # Simpan Model Skenario 2
-model_path = SCRIPT_DIR / 'model_xgboost_scenario2.pkl'
+model_path = SCRIPT_DIR / 'new_model_xgboost_scenario2.pkl'
 joblib.dump(best_model, model_path)
 print(f"\n💾 Model Skenario 2 disimpan ke: {model_path}")

@@ -18,12 +18,20 @@ print(f"Data Dir:     {DATA_DIR}")
 
 # DEFINISI LOKASI FILE (DATA MURNI / IMBALANCED)
 # Menggunakan path sesuai yang Anda minta
+# PATHS = {
+#     "X_train": DATA_DIR / "tokenize" / "train" / "X_train_tfidf.pkl", 
+#     "y_train": DATA_DIR / "tokenize" / "train" / "y_train.pkl",
+#     "X_test":  DATA_DIR / "tokenize" / "test" / "X_test_tfidf.pkl",
+#     "y_test":  DATA_DIR / "tokenize" / "test" / "y_test.pkl",
+#     "le":      DATA_DIR / "tokenize" / "label_encoder.pkl",
+# }
+
 PATHS = {
-    "X_train": DATA_DIR / "tokenize" / "train" / "X_train_tfidf.pkl", 
-    "y_train": DATA_DIR / "tokenize" / "train" / "y_train.pkl",
-    "X_test":  DATA_DIR / "tokenize" / "test" / "X_test_tfidf.pkl",
-    "y_test":  DATA_DIR / "tokenize" / "test" / "y_test.pkl",
-    "le":      DATA_DIR / "tokenize" / "label_encoder.pkl",
+    "X_train": PROJECT_ROOT / "X_train_tfidf.pkl", 
+    "y_train": PROJECT_ROOT / "y_train.pkl",
+    "X_test":  PROJECT_ROOT / "X_test_tfidf.pkl",
+    "y_test":  PROJECT_ROOT / "y_test.pkl",
+    "le":      PROJECT_ROOT / "label_encoder.pkl",
 }
 
 # ==========================================
@@ -118,6 +126,6 @@ print("\nConfusion Matrix:")
 print(confusion_matrix(y_test_label, y_pred_label))
 
 # Simpan Model Baseline
-model_path = SCRIPT_DIR / 'xgboost_scenario1.pkl'
+model_path = SCRIPT_DIR / 'new_xgboost_scenario1.pkl'
 joblib.dump(model_baseline, model_path)
 print(f"\n💾 Model baseline disimpan ke: {model_path}")
