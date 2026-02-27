@@ -3,7 +3,8 @@ import matplotlib.pyplot as plt
 def visualize_pie_only():
     # --- 1. DATA ---
     labels = ['Positif', 'Negatif', 'Netral']
-    counts = [2450, 997, 625]
+    # counts = [2450, 997, 625]
+    counts = [1622, 997, 625]
     
     # Menghitung persentase untuk analisis
     total = sum(counts)
