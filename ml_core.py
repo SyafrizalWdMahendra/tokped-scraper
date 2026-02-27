@@ -25,7 +25,7 @@ def load_ml_assets():
         vectorizer = joblib.load(config.TOKENIZE_DIR / "vectorizer_tfidf.pkl")
         label_encoder = joblib.load(config.TOKENIZE_DIR / "label_encoder.pkl")
         
-        model_path = config.MODEL_DIR / "pipeline_scenario3.pkl"
+        model_path = config.MODEL_DIR / "final_pipeline_scenario3.pkl"
         if model_path.exists():
             model_optimized = joblib.load(model_path)
             print("✅ Model ML Loaded Successfully")
