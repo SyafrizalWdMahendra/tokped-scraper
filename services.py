@@ -10,7 +10,7 @@ def clean_product_name(name: str) -> str:
     return name.strip()
 
 async def process_product_reviews(candidate: ProductCandidate, profession: str, user_email: str):
-    keywords_target = config.PROFESSION_KEYWORDS.get(profession.lower(), [])
+    keywords_target = config.ASPECT_KEYWORDS.get(profession.lower(), [])
     print(f"🔍 Analisis untuk {candidate.name[:20]}... | Profesi: {profession}")
 
     model_db = await prisma.model.find_first(where={"modelName": "Model XGBoost (Baseline)"})

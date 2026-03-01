@@ -5,38 +5,31 @@ DATA_DIR = BASE_DIR / "robust_data"
 MODEL_DIR = BASE_DIR / "models"
 TOKENIZE_DIR = DATA_DIR / "tokenize"
 
-PROFESSION_KEYWORDS = {
-    "programmer": [
-        "keyboard", "ketik", "ngetik", "tuts", "travel", "pencet",
-        "ram", "memory", "memori", "multitasking", "buka banyak", "chrome",
-        "layar", "screen", "monitor", "mata", "jernih", "tajam",
-        "cepat", "kencang", "kenceng", "ngebut", "sat set", "lancar",
-        "ssd", "booting", "nyala", "loading",
-        "coding", "koding", "code", "program", "docker", "virtual", "wsl", "linux",
-        "panas", "adem", "dingin", "fan", "kipas",
-        "kerja", "work", "kantor", "tugas"
+ASPECT_KEYWORDS = {
+    "performa": [
+        "cepat", "kencang", "ngebut", "lancar", "mulus", "sat set", "gaming",
+        "render", "editing", "multitasking", "ram", "ssd", "prosesor", "vga", 
+        "gpu", "intel", "ryzen", "nvidia", "rtx", "lemot", "lag", "hang", 
+        "lelet", "loading", "booting", "koding", "docker", "berat", "panas", 
+        "overheat", "adem", "dingin", "kipas", "fan", "berisik"
     ],
-    "designer": [
-        "warna", "color", "srgb", "akurat", "gonjreng", "pucat",
-        "layar", "screen", "panel", "ips", "oled", "resolusi", "pixel",
-        "render", "rendering", "export", "gpu", "vga", "grafis",
-        "adobe", "photoshop", "illustrator", "premiere", "corel", "canva",
-        "berat", "ringan", "bawa", "tas",
-        "baterai", "awet", "tahan lama" 
+    "layar": [
+        "jernih", "tajam", "bening", "cerah", "bright", "gonjreng", "pucat", 
+        "warna", "akurat", "srgb", "ntsc", "ips", "oled", "amoled", "layar", 
+        "screen", "panel", "hz", "hertz", "refresh rate", "bezel", "tipis", 
+        "resolusi", "fhd", "4k", "retina", "pixel", "dead pixel", "shadow", 
+        "bocor", "backlight bleed", "silau", "matte", "glare"
     ],
-    "student": [
-        "baterai", "awet", "tahan", "cas", "charge",
-        "ringan", "enteng", "tipis", "bawa",
-        "kamera", "cam", "webcam", "zoom", "meet", "gmeet", "teams",
-        "murah", "harga", "budget", "kantong", "worth",
-        "ngetik", "tugas", "skripsi", "makalah", "word", "excel", "office",
-        "speaker", "suara", "mic"
+    "baterai": [
+        "awet", "tahan lama", "badak", "boros", "cepat habis", "drop", 
+        "cas", "charge", "charger", "charging", "watt", "adapter", "kabel", 
+        "type-c", "baterai", "battery", "mah", "tahan", "jam", "standby", 
+        "soak", "panas saat cas"
     ],
-    "gamer": [
-        "fps", "frame", "rata kanan", "smooth", "patah", "drop",
-        "panas", "overheat", "hangat", "kipas", "berisik", "cooling", "adem",
-        "vga", "gpu", "rtx", "gtx", "radeon", "nvidia",
-        "layar", "hz", "hertz", "refresh", "ms",
-        "game", "gaming", "main", "valorant", "dota", "genshin", "pubg"
+    "harga": [
+        "murah", "mahal", "worth it", "value for money", "terjangkau", 
+        "ekonomis", "pricey", "kemahalan", "promo", "diskon", "flash sale", 
+        "bonus", "hadiah", "freebie", "ongkir", "budget", "pelajar", 
+        "kantong", "investasi", "padan", "sesuai harga"
     ],
 }
