@@ -29,33 +29,28 @@ async def shutdown_event():
 
 @app.post("/recommend", response_model=ComparisonResponse)
 async def recommend_laptop(request: RecommendationRequest):
-    """
-    Menerima list produk dan profesi beserta email user.
-    Mengembalikan hasil analisis komparasi.
-    """
     if not ml_core.model_optimized:
-        raise HTTPException(status_code=500, detail="Model Machine Learning belum siap.")
+        raise HTTPException(status_code=500, detail="Model ML tidak siap.")
 
     results = []
     
     for candidate in request.candidates:
         result = await services.process_product_reviews(
             candidate=candidate, 
-            profession=request.profession, 
             user_email=request.user_email
         )
         if result:
             results.append(result)
 
     if not results:
-        raise HTTPException(status_code=400, detail="Tidak ada review yang valid untuk diproses.")
+        raise HTTPException(status_code=400, detail="Tidak ada ulasan valid.")
 
-    sorted_results = sorted(results, key=lambda x: x.profession_compatibility_score, reverse=True)
+    sorted_results = sorted(results, key=lambda x: x.general_score, reverse=True)
     winner = sorted_results[0]
 
     return {
         "user_email": request.user_email,
-        "profession_target": request.profession,
-        "winning_product": winner.name,
+        "analysis_type": "ASPECT_BASED_ANALYSIS",
+        "winning_product": winner.name, 
         "details": results
     }

@@ -8,22 +8,21 @@ class ProductCandidate(BaseModel):
 
 class RecommendationRequest(BaseModel):
     user_email: str
-    profession: str 
     candidates: List[ProductCandidate]
 
 class ProductAnalysisResult(BaseModel):
     name: str
     url: str
-    general_sentiment_score: float 
-    profession_compatibility_score: float 
+    general_score: float
+    aspect_scores: dict[str, float]
     total_reviews: int
     positive_count: int
     negative_count: int
-    top_keywords: List[str]
-    verdict: str  
+    verdict: str
+    description: str
 
 class ComparisonResponse(BaseModel):
     user_email: str
-    profession_target: str
+    analysis_type: str = "ASPECT_BASED" 
     winning_product: str
     details: List[ProductAnalysisResult]
