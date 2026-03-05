@@ -8,10 +8,10 @@ import numpy as np
 scenarios = ['Skenario 1\n(Baseline)', 'Skenario 2\n(Tuned)', 'Skenario 3\n(SMOTE + Opt)']
 
 # Data Metrik (Salin dari Classification Report Anda)
-accuracy   = [0.80, 0.81, 0.82] # Akurasi Global
-macro_f1   = [0.56, 0.58, 0.61] # Keseimbangan Model
-f1_negatif = [0.61, 0.65, 0.65] # Kemampuan Deteksi Komplain
-f1_netral  = [0.16, 0.17, 0.27] # Kemampuan Deteksi Ambigu
+accuracy   = [0.71, 0.73, 0.72] # Akurasi Global
+macro_f1   = [0.62, 0.66, 0.66] # Keseimbangan Model
+f1_negatif = [0.67, 0.69, 0.68] # Kemampuan Deteksi Komplain
+f1_netral  = [0.34, 0.42, 0.43] # Kemampuan Deteksi Ambigu
 
 # ==========================================
 # 2. KONFIGURASI PLOT
@@ -31,7 +31,6 @@ rects4 = ax.bar(x + 1.5*width, f1_netral,  width, label='F1 Netral',     color='
 # 3. PERCANTIK TAMPILAN
 # ==========================================
 ax.set_ylabel('Skor (0.0 - 1.0)', fontsize=12)
-ax.set_title('Perbandingan Performa Model XGBoost (Skenario 1 vs 2 vs 3)', fontsize=16, fontweight='bold')
 ax.set_xticks(x)
 ax.set_xticklabels(scenarios, fontsize=12)
 ax.legend(loc='upper left', fontsize=11)
