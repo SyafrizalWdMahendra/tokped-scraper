@@ -4,7 +4,7 @@ import os
 
 def check_sentiment_counts():
     # 1. Konfigurasi Nama File
-    file_utama = 'new_final_dataset.csv'          # File lama (mayoritas positif)
+    file_utama = 'final_dataset.csv'          # File lama (mayoritas positif)
     # File baru (hasil filter bintang 1-3)
     file_baru = 'trimmed_sentiment_dataset.csv'
 

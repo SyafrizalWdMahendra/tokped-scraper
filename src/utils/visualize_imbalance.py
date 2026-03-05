@@ -32,9 +32,6 @@ def visualize_pie_only():
     # Mempercantik teks persentase
     plt.setp(autotexts, size=14, weight="bold", color="white")
     
-    # Judul Grafik
-    ax.set_title(f"Distribusi Sentimen (Total Data: {total})", fontsize=16, fontweight='bold')
-
     # Menyesuaikan margin agar teks tidak terpotong
     plt.subplots_adjust(bottom=0.3)
     
