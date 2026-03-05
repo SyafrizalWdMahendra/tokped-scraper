@@ -10,28 +10,14 @@ from sklearn.metrics import classification_report, confusion_matrix
 # ==========================================
 SCRIPT_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = SCRIPT_DIR.parents[1] 
-DATA_DIR = PROJECT_ROOT / "data"
-
-print(f"--- INFO PATH SCENARIO 1 ---")
-print(f"Project Root: {PROJECT_ROOT}")
-print(f"Data Dir:     {DATA_DIR}")
-
-# DEFINISI LOKASI FILE (DATA MURNI / IMBALANCED)
-# Menggunakan path sesuai yang Anda minta
-# PATHS = {
-#     "X_train": DATA_DIR / "tokenize" / "train" / "X_train_tfidf.pkl", 
-#     "y_train": DATA_DIR / "tokenize" / "train" / "y_train.pkl",
-#     "X_test":  DATA_DIR / "tokenize" / "test" / "X_test_tfidf.pkl",
-#     "y_test":  DATA_DIR / "tokenize" / "test" / "y_test.pkl",
-#     "le":      DATA_DIR / "tokenize" / "label_encoder.pkl",
-# }
+DATA_DIR = PROJECT_ROOT / "robust_data"
 
 PATHS = {
-    "X_train": PROJECT_ROOT / "X_train_tfidf.pkl", 
-    "y_train": PROJECT_ROOT / "y_train.pkl",
-    "X_test":  PROJECT_ROOT / "X_test_tfidf.pkl",
-    "y_test":  PROJECT_ROOT / "y_test.pkl",
-    "le":      PROJECT_ROOT / "label_encoder.pkl",
+    "X_train": DATA_DIR / "tokenize" / "X_train_tfidf.pkl",
+    "y_train": DATA_DIR / "tokenize" / "y_train.pkl",
+    "X_test":  DATA_DIR / "tokenize" / "X_test_tfidf.pkl",
+    "y_test":  DATA_DIR / "tokenize" / "y_test.pkl",
+    "le":      DATA_DIR / "tokenize" / "label_encoder.pkl",
 }
 
 # ==========================================

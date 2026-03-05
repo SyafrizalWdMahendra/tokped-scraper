@@ -16,22 +16,14 @@ from imblearn.over_sampling import SMOTE
 # ==========================================
 SCRIPT_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = SCRIPT_DIR.parents[1]
-DATA_DIR = PROJECT_ROOT / "data"
-
-# PATHS = {
-#     "X_train": DATA_DIR / "tokenize" / "train" / "X_train_tfidf.pkl",
-#     "y_train": DATA_DIR / "tokenize" / "train" / "y_train.pkl",
-#     "X_test":  DATA_DIR / "tokenize" / "test" / "X_test_tfidf.pkl",
-#     "y_test":  DATA_DIR / "tokenize" / "test" / "y_test.pkl",
-#     "le":      DATA_DIR / "tokenize" / "label_encoder.pkl",
-# }
+DATA_DIR = PROJECT_ROOT / "robust_data"
 
 PATHS = {
-    "X_train": PROJECT_ROOT / "X_train_tfidf.pkl",
-    "y_train": PROJECT_ROOT / "y_train.pkl",
-    "X_test":  PROJECT_ROOT / "X_test_tfidf.pkl",
-    "y_test":  PROJECT_ROOT / "y_test.pkl",
-    "le":      PROJECT_ROOT / "label_encoder.pkl",
+    "X_train": DATA_DIR / "tokenize" / "X_train_tfidf.pkl",
+    "y_train": DATA_DIR / "tokenize" / "y_train.pkl",
+    "X_test":  DATA_DIR / "tokenize" / "X_test_tfidf.pkl",
+    "y_test":  DATA_DIR / "tokenize" / "y_test.pkl",
+    "le":      DATA_DIR / "tokenize" / "label_encoder.pkl",
 }
 
 print("--- MENYIAPKAN TRAINING SCENARIO 3 (PIPELINE: SMOTE + CHI2 + XGBOOST) ---")
@@ -144,7 +136,7 @@ print(confusion_matrix(y_test_label, y_pred_label))
 # ==========================================
 MODEL_DIR = PROJECT_ROOT / "models"
 MODEL_DIR.mkdir(exist_ok=True)
-model_path = MODEL_DIR / "final_pipeline_scenario3.pkl"
+model_path = MODEL_DIR / "final_pipeline_scenario3-testing.pkl"
 joblib.dump(best_model, model_path)
 
 print(f"\n💾 Model disimpan ke: {model_path}")
