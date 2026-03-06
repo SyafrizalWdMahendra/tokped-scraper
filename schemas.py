@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import List
+from typing import List, Optional
 
 class ProductCandidate(BaseModel):
     name: str
@@ -9,6 +9,8 @@ class ProductCandidate(BaseModel):
 class RecommendationRequest(BaseModel):
     user_email: str
     candidates: List[ProductCandidate]
+    metric_id: Optional[int] = 1
+    brand_id: Optional[int] = 1
 
 class ProductAnalysisResult(BaseModel):
     name: str

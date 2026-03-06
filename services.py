@@ -9,9 +9,8 @@ def clean_product_name(name: str) -> str:
     name = re.sub(r'【.*?】', '', name)
     return name.strip()
 
-async def process_product_reviews(candidate: ProductCandidate, user_email: str):
+async def process_product_reviews(candidate: ProductCandidate, user_email: str, metric_id: int, brand_id: int):
     # 1. SETUP ASPEK (Initialize score 0 untuk setiap kategori)
-    # Categories: performa, layar, baterai, harga
     aspect_stats = {
         aspect: {"positive": 0, "total": 0} 
         for aspect in config.ASPECT_KEYWORDS.keys()
@@ -31,13 +30,21 @@ async def process_product_reviews(candidate: ProductCandidate, user_email: str):
         return None
 
     # 3. PRODUCT PERSISTENCE
+    brand_name = clean_product_name(candidate.name.split()[0]) if candidate.name.strip() else "Unknown"
+    product_name = clean_product_name(candidate.name)
+
     product_db = await prisma.product.find_first(where={"url": candidate.url})
     if not product_db:
         product_db = await prisma.product.create(
             data={
-                "name": clean_product_name(candidate.name),
+                "name": product_name,
                 "url": candidate.url,
-                "brand": clean_product_name(candidate.name.split()[0]) if candidate.name.strip() else "Unknown",
+                "brand": {
+                    "connect_or_create": {
+                        "where": {"name": brand_name}, 
+                        "create": {"name": brand_name}
+                    }
+                },
             }
         )
 
@@ -91,15 +98,16 @@ async def process_product_reviews(candidate: ProductCandidate, user_email: str):
             "sentiment": Sentiment.POSITIVE if is_positive else Sentiment.NEGATIVE,
             "confidenceScore": confidence_score,
             "keywords": final_keywords,  
-            "productId": product_db.id,
-            "modelId": model_db.id,
+            "productId": product_db.productId,
+            "modelId": model_db.modelId,    
             "userId": user_db.id
         })
 
     # 5. DATABASE SYNC (Batch Operations)
     if reviews_data_to_save:
-        await prisma.review.delete_many(where={"productId": product_db.id})
-        await prisma.review.create_many(data=reviews_data_to_save)
+        async with prisma.tx() as transaction:
+            await transaction.review.delete_many(where={"productId": product_db.productId})
+            await transaction.review.create_many(data=reviews_data_to_save)
 
     # 6. CALCULATION & VERDICT GENERATION
     final_aspect_scores = {}
@@ -128,20 +136,34 @@ async def process_product_reviews(candidate: ProductCandidate, user_email: str):
     else:
         verdict_label = "Kurang Disarankan"
 
-    # 7. SAVE ANALYSIS TO DB
-    await prisma.analysis.create(data={
-        "targetProfession": "ASPECT_BASED", 
-        "generalSentiment": round(general_sentiment_pct, 1),
-        "compatibilityScore": round(general_sentiment_pct, 1), 
-        "verdict": verdict_label,
-        "topKeywords": [verdict_summary], 
-        "userId": user_db.id,
-        "productId": product_db.id,
-        "modelId": model_db.id
-    })
+    # 1. Buat Analysis terlebih dahulu untuk mendapatkan ID-nya
+    new_analysis = await prisma.analysis.create(
+        data={
+            "userId": user_db.id,
+        }
+    )
+
+    # 2. Buat Metric dan hubungkan ke Analysis yang baru saja dibuat
+    await prisma.metric.create(
+        data={
+            "generalSentiment": general_sentiment_pct,
+            "compatibilityScore": general_sentiment_pct,
+            "verdict": verdict_label,
+            "topKeywords": [verdict_summary],
+            "analysisId": new_analysis.analysisId,
+            "productId": product_db.productId,
+            "modelId": model_db.modelId,
+        }
+    )
 
     return ProductAnalysisResult(
-        name=candidate.name, url=candidate.url, general_score=round(general_sentiment_pct, 1),
-        aspect_scores=final_aspect_scores, total_reviews=total_reviews, description=verdict_summary,
-        positive_count=pos_count, negative_count=neg_count, verdict=verdict_label
+        name=candidate.name, 
+        url=candidate.url, 
+        general_score=general_sentiment_pct,
+        aspect_scores=final_aspect_scores, 
+        total_reviews=total_reviews, 
+        description=verdict_summary,
+        positive_count=pos_count, 
+        negative_count=neg_count, 
+        verdict=verdict_label
     )

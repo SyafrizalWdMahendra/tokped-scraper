@@ -41,8 +41,8 @@ async def recommend_laptop(request: RecommendationRequest):
     for candidate in request.candidates:
         result = await services.process_product_reviews(
             candidate=candidate, 
-            profession=request.profession, 
-            user_email=request.user_email
+            user_email=request.user_email,
+            metric_id=request.metric_id
         )
         if result:
             results.append(result)
@@ -55,7 +55,7 @@ async def recommend_laptop(request: RecommendationRequest):
 
     return {
         "user_email": request.user_email,
-        "profession_target": request.profession,
+        "metric_id": request.metric_id,
         "winning_product": winner.name,
         "details": results
     }

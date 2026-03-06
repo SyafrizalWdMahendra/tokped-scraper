@@ -9,7 +9,7 @@ app = FastAPI(title="Tokopedia Laptop Recommendation API (Profession Based)")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["http://localhost:3000"], 
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -37,20 +37,28 @@ async def recommend_laptop(request: RecommendationRequest):
     for candidate in request.candidates:
         result = await services.process_product_reviews(
             candidate=candidate, 
-            user_email=request.user_email
+            user_email=request.user_email,
+            metric_id=request.metric_id,
+            brand_id=request.brand_id,
         )
         if result:
             results.append(result)
 
-    if not results:
-        raise HTTPException(status_code=400, detail="Tidak ada ulasan valid.")
+        if not results:
+            raise HTTPException(status_code=400, detail="Tidak ada ulasan valid yang berhasil diproses.")
 
-    sorted_results = sorted(results, key=lambda x: x.general_score, reverse=True)
-    winner = sorted_results[0]
+        try:
+            sorted_results = sorted(results, key=lambda x: x.general_score, reverse=True)
+        except AttributeError:
+            sorted_results = sorted(results, key=lambda x: x["general_score"], reverse=True)
+
+        winner = sorted_results[0]
 
     return {
         "user_email": request.user_email,
-        "analysis_type": "ASPECT_BASED_ANALYSIS",
+        # "analysis_type": "ASPECT_BASED_ANALYSIS",
+        "brand_id": request.brand_id,
         "winning_product": winner.name, 
-        "details": results
+        "details": results,
+        "metric_id": request.metric_id
     }

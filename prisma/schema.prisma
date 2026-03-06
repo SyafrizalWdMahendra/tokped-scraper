@@ -1,6 +1,6 @@
 generator client {
-  provider = "prisma-client-py"
-  interface = "asyncio"
+  provider             = "prisma-client-py"
+  interface            = "asyncio"
   recursive_type_depth = 5
 }
 
@@ -29,7 +29,7 @@ enum OS {
   OTHER
 }
 
-enum Brand {
+enum BrandName {
   APPLE
   ASUS
   ACER
@@ -43,9 +43,16 @@ enum Brand {
   OTHER
 }
 
+enum Profession {
+  PROGRAMMER
+  DESIGNER
+  STUDENT
+  GAMER
+  OTHER
+}
+
 model Account {
   id                Int     @id @default(autoincrement())
-  userId            Int
   type              String
   provider          String
   providerAccountId String
@@ -56,17 +63,23 @@ model Account {
   scope             String?
   id_token          String?
   session_state     String?
-  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  userId Int  @map("user_id")
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
+  @@map("accounts")
 }
 
 model Session {
   id           Int      @id @default(autoincrement())
-  sessionToken String   @unique
-  userId       Int
+  sessionToken String   @unique @map("session_token")
   expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  userId Int  @map("user_id")
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
 }
 
 model VerificationToken {
@@ -78,7 +91,7 @@ model VerificationToken {
 }
 
 model User {
-  id            Int       @id @default(autoincrement())
+  id            Int       @id @default(autoincrement()) @map("userId")
   name          String?
   email         String?   @unique
   emailVerified DateTime?
@@ -94,40 +107,50 @@ model User {
   analyses Analysis[]
 
   preference UserPreference?
-  review Review[]
+  review     Review[]
+
+  @@map("users")
 }
 
 model UserPreference {
-  id            Int     @id @default(autoincrement())
-  profession    String?
-  preferredOS   OS?
-  preferedBrand Brand?
-  budgetMin     Int?
-  budgetMax     Int?
+  userPreferenceId Int         @id @default(autoincrement())
+  profession       Profession?
+  preferredOS      OS?
+  budgetMin        Int?
+  budgetMax        Int?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   userId Int  @unique
   user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  preferedBrandId Int?
+  brand           Brand? @relation(fields: [preferedBrandId], references: [brandId], map: "user_pref_brand_fkey")
+
+  @@map("user_preferences")
 }
 
 model Product {
-  id    Int     @id @default(autoincrement())
-  name  String
-  brand String?
-  url   String  @unique
-  image String?
+  productId Int     @id @default(autoincrement())
+  name      String
+  url       String  @unique
+  image     String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  reviews  Review[]
-  analyses Analysis[]
+  reviews Review[]
+  metrics Metric[]
+
+  brandId Int?
+  brand   Brand? @relation(fields: [brandId], references: [brandId], map: "product_brand_fkey")
+
+  @@map("products")
 }
 
 model Review {
-  id              Int       @id @default(autoincrement())
+  reviewId        Int       @id @default(autoincrement())
   content         String
   sentiment       Sentiment
   confidenceScore Float
@@ -137,51 +160,73 @@ model Review {
   updatedAt DateTime @updatedAt
 
   productId Int
-  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  product   Product @relation(fields: [productId], references: [productId], onDelete: Cascade)
 
   modelId Int?
-  model   Model? @relation(fields: [modelId], references: [id])
+  model   Model? @relation(fields: [modelId], references: [modelId])
 
   userId Int?
   user   User? @relation(fields: [userId], references: [id])
 }
 
 model Analysis {
-  id Int @id @default(autoincrement())
-
-  targetProfession String
-
-  generalSentiment   Float
-  compatibilityScore Float
-  verdict            String
-
-  topKeywords String[]
-
-  createdAt DateTime @default(now())
-
-  userId Int
-  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  productId Int
-  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-
-  modelId Int
-  model   Model @relation(fields: [modelId], references: [id])
-}
-
-model Model {
-  id          Int     @id @default(autoincrement())
-  modelName   String
-  description String?
-
-  accuracy   Float
-  macroF1    Float
-  f1Negative Float
-  f1Neutral  Float
+  analysisId Int @id @default(autoincrement())
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  analyses Analysis[]
-  reviews  Review[]
+  userId Int
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  metric Metric[]
+}
+
+model Model {
+  modelId     Int     @id @default(autoincrement())
+  modelName   String
+  description String?
+  accuracy    Float
+  macroF1     Float
+  f1Negative  Float
+  f1Neutral   Float
+  isActive    Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  metrics Metric[]
+  reviews Review[]
+}
+
+model Metric {
+  metricId           Int      @id @default(autoincrement())
+  generalSentiment   Float
+  compatibilityScore Float
+  verdict            String
+  topKeywords        String[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  analysisId Int
+  analysis   Analysis @relation(fields: [analysisId], references: [analysisId])
+
+  productId Int
+  product   Product @relation(fields: [productId], references: [productId], onDelete: Cascade)
+
+  modelId Int
+  model   Model @relation(fields: [modelId], references: [modelId])
+}
+
+model Brand {
+  brandId Int    @id @default(autoincrement())
+  name    String @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  products        Product[]
+  userPreferences UserPreference[]
+
+  @@map("brands")
 }
