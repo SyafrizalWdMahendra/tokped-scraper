@@ -56,7 +56,6 @@ async def recommend_laptop(request: RecommendationRequest):
 
     return {
         "user_email": request.user_email,
-        # "analysis_type": "ASPECT_BASED_ANALYSIS",
         "brand_id": request.brand_id,
         "winning_product": winner.name, 
         "details": results,
