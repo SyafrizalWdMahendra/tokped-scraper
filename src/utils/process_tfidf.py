@@ -8,8 +8,8 @@ from sklearn.preprocessing import LabelEncoder
 # ==========================================
 file_train = 'data_train_80.csv'
 file_test = 'data_test_20.csv'
-col_text = 'Cleaned_Review'  # Pastikan nama kolom teks sesuai
-col_label = 'Sentiment'      # Pastikan nama kolom label sesuai
+col_text = 'Cleaned_Review'  
+col_label = 'Sentiment'      
 
 print("--- MEMULAI PROSES TF-IDF ---")
 
@@ -74,6 +74,11 @@ try:
     print("2. X_test_tfidf.pkl & y_test.pkl   (Siap untuk Evaluasi)")
     print("3. vectorizer_tfidf.pkl            (Simpan untuk skripsi)")
     print("="*40)
+
+    # Untuk melihat daftar kata yang dihasilkan (Token)
+    fitur_nama = tfidf.get_feature_names_out()
+    print(f"Jumlah total fitur (kata unik): {len(fitur_nama)}")
+    print(f"Contoh 10 kata pertama: {fitur_nama[:10]}")
 
 except FileNotFoundError:
     print("ERROR: File CSV tidak ditemukan. Pastikan 'data_train_80.csv' dan 'data_test_20.csv' ada di folder ini.")
