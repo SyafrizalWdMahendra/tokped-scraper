@@ -32,7 +32,7 @@ print("--- MENYIAPKAN TRAINING SCENARIO 3 (PIPELINE: SMOTE + CHI2 + XGBOOST) ---
 data = {}
 for name, path in PATHS.items():
     if not path.exists():
-        print(f"❌ ERROR: File tidak ditemukan → {path}")
+        print(f"❌ ERROR: File tidak ditekmukan → {path}")
         sys.exit(1)
     data[name] = joblib.load(path)
     print(f"✅ Loaded: {path}")
