@@ -82,11 +82,19 @@ pipeline = ImbPipeline([
 # ==========================================
 # SETTING GRID SEARCH
 # ==========================================
+# param_grid = {
+#     'clf__learning_rate': [0.1, 0.2],
+#     'clf__max_depth': [5, 7],
+#     'clf__n_estimators': [100, 200],
+#     'clf__subsample': [0.8, 1.0],
+# }
+
 param_grid = {
-    'clf__learning_rate': [0.1, 0.2],
-    'clf__max_depth': [5, 7],
+    'clf__learning_rate': [0.01, 0.1, 0.2],
+    'clf__max_depth': [3, 5, 7],
     'clf__n_estimators': [100, 200],
     'clf__subsample': [0.8, 1.0],
+    'clf__colsample_bytree': [0.8, 1.0]
 }
 
 grid_search = GridSearchCV(
@@ -136,7 +144,8 @@ print(confusion_matrix(y_test_label, y_pred_label))
 # ==========================================
 MODEL_DIR = PROJECT_ROOT / "models"
 MODEL_DIR.mkdir(exist_ok=True)
-model_path = MODEL_DIR / "final_pipeline_scenario3-testing.pkl"
+model_path = MODEL_DIR / "final_pipeline_scenario3.pkl"
 joblib.dump(best_model, model_path)
 
 print(f"\n💾 Model disimpan ke: {model_path}")
+
