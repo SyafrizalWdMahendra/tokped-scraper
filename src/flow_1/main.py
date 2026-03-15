@@ -88,7 +88,7 @@ shown_params = {k: all_params.get(k) for k in key_params}
 
 # Jika n_estimators atau learning_rate None (karena default library), kita set nilai standarnya manual untuk info
 if shown_params['n_estimators'] is None: shown_params['n_estimators'] = "100 (Default)"
-if shown_params['learning_rate'] is None: shown_params['learning_rate'] = "Default (biasanya 0.3)"
+if shown_params['learning_rate'] is None: shown_params['learning_rate'] = "Default"
 
 print(shown_params)
 print("(Gunakan nilai ini untuk perbandingan di Bab 4)")

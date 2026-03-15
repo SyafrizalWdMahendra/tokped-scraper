@@ -144,7 +144,7 @@ print(confusion_matrix(y_test_label, y_pred_label))
 # ==========================================
 MODEL_DIR = PROJECT_ROOT / "models"
 MODEL_DIR.mkdir(exist_ok=True)
-model_path = MODEL_DIR / "final_pipeline_scenario3.pkl"
+model_path = MODEL_DIR / "xgboost_scenario3.pkl"
 joblib.dump(best_model, model_path)
 
 print(f"\n💾 Model disimpan ke: {model_path}")
