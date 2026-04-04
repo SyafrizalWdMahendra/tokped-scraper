@@ -1,0 +1,13 @@
+pandas
+numpy
+scikit-learn
+xgboost
+selenium
+beautifulsoup4
+nltk
+sastrawi
+matplotlib
+seaborn
+wordcloud
+imblearn
+joblib

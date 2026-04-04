@@ -1,0 +1,232 @@
+generator client {
+  provider             = "prisma-client-py"
+  interface            = "asyncio"
+  recursive_type_depth = 5
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserGender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum Sentiment {
+  POSITIVE
+  NEGATIVE
+  NEUTRAL
+}
+
+enum OS {
+  WINDOWS
+  MACOS
+  LINUX
+  CHROME_OS
+  OTHER
+}
+
+enum BrandName {
+  APPLE
+  ASUS
+  ACER
+  LENOVO
+  HP
+  DELL
+  MSI
+  AXIOO
+  ADVAN
+  ZYREX
+  OTHER
+}
+
+enum Profession {
+  PROGRAMMER
+  DESIGNER
+  STUDENT
+  GAMER
+  OTHER
+}
+
+model Account {
+  id                Int     @id @default(autoincrement())
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  userId Int  @map("user_id")
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           Int      @id @default(autoincrement())
+  sessionToken String   @unique @map("session_token")
+  expires      DateTime
+
+  userId Int  @map("user_id")
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model User {
+  id            Int       @id @default(autoincrement()) @map("userId")
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  password      String?
+  bio           String?   @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  accounts Account[]
+  sessions Session[]
+  analyses Analysis[]
+
+  preference UserPreference?
+  review     Review[]
+
+  @@map("users")
+}
+
+model UserPreference {
+  userPreferenceId Int         @id @default(autoincrement())
+  profession       Profession?
+  preferredOS      OS?
+  budgetMin        Int?
+  budgetMax        Int?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId Int  @unique
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  preferedBrandId Int?
+  brand           Brand? @relation(fields: [preferedBrandId], references: [brandId], map: "user_pref_brand_fkey")
+
+  @@map("user_preferences")
+}
+
+model Product {
+  productId Int     @id @default(autoincrement())
+  name      String
+  url       String  @unique
+  image     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  reviews Review[]
+  metrics Metric[]
+
+  brandId Int?
+  brand   Brand? @relation(fields: [brandId], references: [brandId], map: "product_brand_fkey")
+
+  @@map("products")
+}
+
+model Review {
+  reviewId        Int       @id @default(autoincrement())
+  content         String
+  sentiment       Sentiment
+  confidenceScore Float
+  keywords        String[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  productId Int
+  product   Product @relation(fields: [productId], references: [productId], onDelete: Cascade)
+
+  modelId Int?
+  model   Model? @relation(fields: [modelId], references: [modelId])
+
+  userId Int?
+  user   User? @relation(fields: [userId], references: [id])
+}
+
+model Analysis {
+  analysisId Int @id @default(autoincrement())
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  metric Metric[]
+}
+
+model Model {
+  modelId     Int     @id @default(autoincrement())
+  modelName   String
+  description String?
+  accuracy    Float
+  macroF1     Float
+  f1Negative  Float
+  f1Neutral   Float
+  isActive    Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  metrics Metric[]
+  reviews Review[]
+}
+
+model Metric {
+  metricId           Int      @id @default(autoincrement())
+  generalSentiment   Float
+  compatibilityScore Float
+  verdict            String
+  topKeywords        String[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  analysisId Int
+  analysis   Analysis @relation(fields: [analysisId], references: [analysisId])
+
+  productId Int
+  product   Product @relation(fields: [productId], references: [productId], onDelete: Cascade)
+
+  modelId Int
+  model   Model @relation(fields: [modelId], references: [modelId])
+}
+
+model Brand {
+  brandId Int    @id @default(autoincrement())
+  name    String @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  products        Product[]
+  userPreferences UserPreference[]
+
+  @@map("brands")
+}
