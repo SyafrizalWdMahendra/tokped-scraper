@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
-from contextlib import asynccontextmanager 
+from contextlib import asynccontextmanager
 from connection import prisma
 from schemas import ComparisonResponse, RecommendationRequest
 import ml_core
@@ -8,8 +8,7 @@ import services
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Mengelola startup dan shutdown aplikasi secara efisien."""
-    print("⏳ Menghubungkan ke Database...")
+    print("⏳ Menghubungkan ke Database Neon...")
     await prisma.connect()
     
     print("🤖 Memuat Asset Machine Learning (XGBoost)...")
@@ -22,13 +21,13 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title="Tokopedia Laptop Recommendation API",
-    description="Backend untuk analisis sentimen ulasan laptop menggunakan XGBoost",
+    description="Backend analisis sentimen ulasan laptop menggunakan XGBoost - Syafrizal Wd Mahendra",
     lifespan=lifespan
 )
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"], 
+    allow_origins=["*"], 
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
