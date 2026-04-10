@@ -11,9 +11,6 @@ from sklearn.metrics import classification_report, confusion_matrix
 from imblearn.pipeline import Pipeline as ImbPipeline 
 from imblearn.over_sampling import SMOTE
 
-# ==========================================
-# KONFIGURASI PATH
-# ==========================================
 SCRIPT_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = SCRIPT_DIR.parents[1]
 DATA_DIR = PROJECT_ROOT / "robust_data"
@@ -28,7 +25,6 @@ PATHS = {
 
 print("--- MENYIAPKAN TRAINING SCENARIO 3 (PIPELINE: SMOTE + CHI2 + XGBOOST) ---")
 
-# Load Data
 data = {}
 for name, path in PATHS.items():
     if not path.exists():
@@ -41,9 +37,6 @@ X_train, y_train = data["X_train"], data["y_train"]
 X_test, y_test = data["X_test"], data["y_test"]
 le = data["le"]
 
-# ==========================================
-# REPORT PROPORSI DATA (SEBELUM & SESUDAH SMOTE)
-# ==========================================
 print("\n" + "="*40)
 print("REPORT PROPORSI DATA")
 print("="*40)
@@ -57,16 +50,12 @@ def print_proportion(y, title):
 
 print_proportion(y_train, "PROPORSI DATA AWAL (TRAIN)")
 
-# Simulasi SMOTE untuk melihat hasil akhir yang akan diproses Pipeline
 sm_sim = SMOTE(random_state=42)
 _, y_resampled_sim = sm_sim.fit_resample(X_train, y_train)
 print_proportion(y_resampled_sim, "ESTIMASI PROPORSI SETELAH SMOTE (DALAM PIPELINE)")
 
 print("\n" + "="*40)
 
-# ==========================================
-# DEFINISI PIPELINE
-# ==========================================
 pipeline = ImbPipeline([
     ('smote', SMOTE(random_state=42)), 
     ('selector', SelectKBest(score_func=chi2, k=2000)), 
@@ -79,9 +68,6 @@ pipeline = ImbPipeline([
     ))
 ])
 
-# ==========================================
-# SETTING GRID SEARCH
-# ==========================================
 # param_grid = {
 #     'clf__learning_rate': [0.1, 0.2],
 #     'clf__max_depth': [5, 7],
@@ -106,9 +92,6 @@ grid_search = GridSearchCV(
     verbose=2
 )
 
-# ==========================================
-# EKSEKUSI TRAINING
-# ==========================================
 print(f"\n🔥 MULAI TRAINING... (Dimensi Awal: {X_train.shape})")
 start_time = time.time()
 
@@ -117,9 +100,6 @@ grid_search.fit(X_train, y_train)
 duration = time.time() - start_time
 print(f"\n✅ SELESAI! Waktu proses: {duration/60:.2f} menit")
 
-# ==========================================
-# EVALUASI
-# ==========================================
 best_model = grid_search.best_estimator_
 
 print("\n" + "="*40)
@@ -129,7 +109,6 @@ print(grid_search.best_params_)
 
 y_pred = best_model.predict(X_test)
 
-# Inverse Transform Label
 y_test_label = le.inverse_transform(y_test)
 y_pred_label = le.inverse_transform(y_pred)
 
@@ -139,9 +118,6 @@ print(classification_report(y_test_label, y_pred_label))
 print("\nConfusion Matrix:")
 print(confusion_matrix(y_test_label, y_pred_label))
 
-# ==========================================
-# SIMPAN MODEL
-# ==========================================
 MODEL_DIR = PROJECT_ROOT / "models"
 MODEL_DIR.mkdir(exist_ok=True)
 model_path = MODEL_DIR / "xgboost_scenario3.pkl"

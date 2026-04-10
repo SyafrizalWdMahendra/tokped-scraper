@@ -14,16 +14,11 @@ from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
 import os
-# Download NLTK resources (Cukup sekali run)
-# nltk.download('punkt')
-# nltk.download('stopwords')
-# nltk.download('wordnet')
 
 
 class ReviewScraper:
     def __init__(self):
         options = Options()
-        # options.add_argument("--headless")
         options.add_argument("--start-maximized")
         options.add_argument("--disable-blink-features=AutomationControlled")
         options.add_experimental_option(
@@ -43,7 +38,6 @@ class ReviewScraper:
 
     def get_review_data(self, container, source_url) -> dict:
         try:
-            # 1. Username
             username = "Anonymous"
             user_elem = container.find(
                 'span', attrs={'data-testid': 'proName'})
@@ -53,7 +47,6 @@ class ReviewScraper:
             if user_elem:
                 username = user_elem.text
 
-            # 2. Rating (Ambil dari aria-label bintang)
             rating = "5"
             rating_elem = container.find(
                 'div', attrs={'data-testid': 'icnStarRating'})
@@ -63,7 +56,6 @@ class ReviewScraper:
                 except:
                     pass
 
-            # 3. Ulasan Text
             ulasan = ""
             ulasan_elem = container.find(
                 'span', attrs={'data-testid': 'lblItemUlasan'})
@@ -72,7 +64,6 @@ class ReviewScraper:
             if ulasan_elem:
                 ulasan = ulasan_elem.text
 
-            # Fallback jika ulasan kosong
             if not ulasan:
                 paragraphs = container.find_all('p')
                 for p in paragraphs:
@@ -80,7 +71,6 @@ class ReviewScraper:
                         ulasan = p.text
                         break
 
-            # 4. Tanggal
             waktu_komentar = "Unknown"
             date_elem = container.find(
                 'p', class_=re.compile(r'timestamp|date', re.I))
@@ -92,7 +82,6 @@ class ReviewScraper:
                         waktu_komentar = span.text
                         break
 
-            # VALIDASI: Jangan simpan jika kosong
             if not ulasan:
                 return None
 
@@ -118,13 +107,10 @@ class ReviewScraper:
         """
         print(f"   ...Mencoba {action} filter Bintang {rating}...")
 
-        # Scroll agar elemen masuk viewport
         self.driver.execute_script("window.scrollBy(0, 400);")
         time.sleep(1)
 
-        # STRATEGI XPATH
         strategies = [
-            # Spesifik Tokped baru
             f"//label[contains(@for, 'rating') and .//text()='{rating}']",
             f"//label[.//text()='{rating}' and .//*[name()='img' or name()='svg']]",
             f"//*[text()='Rating']/ancestor::div[2]//label[contains(., '{rating}')]",
@@ -134,38 +120,31 @@ class ReviewScraper:
         for attempt in range(max_retries):
             found_element = None
 
-            # Coba cari elemen dengan salah satu strategi
             for xpath in strategies:
                 try:
-                    # Timeout dipendekkan ke 2 detik agar cepat skip jika tidak ada
                     found_element = WebDriverWait(self.driver, 2).until(
                         EC.presence_of_element_located((By.XPATH, xpath))
                     )
 
-                    # Cek apakah visible & clickable
                     if found_element.is_displayed():
-                        # Cek apakah disabled (kelas CSS atau atribut)
                         if "disabled" in found_element.get_attribute("class") or found_element.get_attribute("disabled"):
                             print(
                                 f"   [SKIP] Filter Bintang {rating} ada tapi DISABLED (Non-aktif).")
                             return False
 
-                        # Jika elemen ketemu, siap diklik
                         break
                     else:
-                        found_element = None  # Ketemu di DOM tapi hidden
+                        found_element = None 
                 except TimeoutException:
-                    continue  # Coba strategi xpath berikutnya
+                    continue  
 
-            # HASIL PENCARIAN
             if found_element:
                 try:
-                    # KLIK!
                     self.driver.execute_script(
                         "arguments[0].click();", found_element)
                     print(
                         f"   [SUKSES] Filter Bintang {rating} berhasil di-{action}!")
-                    time.sleep(3)  # Tunggu loading data
+                    time.sleep(3)
                     return True
                 except Exception as click_error:
                     if attempt < max_retries - 1:
@@ -178,8 +157,6 @@ class ReviewScraper:
                             f"   [ERROR] Gagal klik filter setelah retry: {click_error}")
                         return False
             else:
-                # PENTING: Jika di attempt pertama tidak ketemu di semua strategi,
-                # asumsikan filter TIDAK ADA. Jangan retry.
                 print(
                     f"   [SKIP] Filter Bintang {rating} TIDAK DITEMUKAN (Mungkin 0 ulasan). Lanjut.")
                 return False
@@ -199,7 +176,6 @@ class ReviewScraper:
                 containers = soup.find_all("article")
 
             if not containers:
-                # Double check: kadang loading lambat
                 time.sleep(2)
                 soup = BeautifulSoup(self.driver.page_source, "html.parser")
                 containers = soup.find_all(
@@ -214,7 +190,6 @@ class ReviewScraper:
             for container in containers:
                 review_data = self.get_review_data(container, url)
                 if review_data:
-                    # Validasi Rating sesuai Filter
                     if current_rating_context != "ALL" and review_data['Rating'] != current_rating_context:
                         continue
 
@@ -229,12 +204,11 @@ class ReviewScraper:
             else:
                 print(f"      . Halaman {page_number} tidak ada data baru.")
                 empty_page_count += 1
-                if empty_page_count >= 2:  # Stop jika 2 halaman berturut-turut zonk
+                if empty_page_count >= 2: 
                     print(
                         "      [STOP] 2 halaman tanpa data baru. Pindah filter.")
                     break
 
-            # Navigasi Next Button
             try:
                 next_button = self.driver.find_element(
                     By.CSS_SELECTOR, "button[aria-label^='Laman berikutnya']")
@@ -256,35 +230,27 @@ class ReviewScraper:
             self.driver.execute_script("window.scrollBy(0, 800);")
             time.sleep(2)
 
-            # TARGET: Negatif (1,2) & Netral (3)
             target_filters = ['1', '2', '3']
 
             for rating in target_filters:
-                # 1. KLIK FILTER
                 success = self.toggle_filter(rating, action="CHECK")
 
                 if success:
-                    # 2. SCRAPE
                     self.scrape_pages_current_view(
                         url, current_rating_context=rating)
 
-                    # 3. UNCHECK (PENTING: Gunakan logic toggle yang sama)
-                    # Scroll dikit ke atas biar tombol filter kelihatan lagi
                     self.driver.execute_script("window.scrollBy(0, -300);")
                     time.sleep(1)
 
                     uncheck_success = self.toggle_filter(
                         rating, action="UNCHECK")
                     if not uncheck_success:
-                        # Jika gagal uncheck, refresh page adalah jalan ninja
                         print(
                             "   [REFRESH] Gagal uncheck, refresh halaman untuk reset filter...")
                         self.driver.refresh()
                         time.sleep(4)
                         self.driver.execute_script("window.scrollBy(0, 800);")
                 else:
-                    # Jika toggle CHECK gagal/tidak ketemu -> LANJUT ke rating berikutnya
-                    # Tidak perlu scrape, tidak perlu uncheck
                     continue
 
                 time.sleep(1)
@@ -306,23 +272,18 @@ class ReviewScraper:
         self.driver.quit()
 
         if self.data:
-            # 1. Siapkan Data Baru
             df_new = pd.DataFrame(self.data)
             df_new = self.label_data(df_new)
             
             filename = 'new_dataset_fix_balanced.csv'
             
-            # 2. Cek apakah file sudah ada (Smart Merge Logic)
             if os.path.exists(filename):
                 try:
                     print(f"\n[INFO] File '{filename}' ditemukan. Membaca data lama...")
                     df_old = pd.read_csv(filename)
                     
-                    # Gabungkan data lama dan baru
                     df_combined = pd.concat([df_old, df_new], ignore_index=True)
                     
-                    # 3. Hapus Duplikat
-                    # Kita anggap duplikat jika Username, Review (yang sudah dibersihkan), dan Tanggal sama persis
                     total_before = len(df_combined)
                     df_combined.drop_duplicates(subset=['Username', 'Cleaned_Review', 'Date'], keep='first', inplace=True)
                     total_after = len(df_combined)
@@ -339,7 +300,6 @@ class ReviewScraper:
                 print(f"\n[INFO] File '{filename}' belum ada. Membuat file baru.")
                 df_final = df_new
 
-            # 4. Simpan Hasil Akhir
             print("\n=== TOTAL DATASET SETELAH UPDATE ===")
             print(df_final['Sentiment'].value_counts())
             

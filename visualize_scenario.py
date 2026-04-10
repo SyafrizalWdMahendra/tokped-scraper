@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-# Data dari hasil eksperimen Anda
 scenarios = ['Skenario 1\n(Baseline)', 'Skenario 2\n(Tuned)', 'Skenario 3\n(Full Optimized)']
 accuracy = [0.78, 0.79, 0.77]
 macro_f1 = [0.65, 0.66, 0.66]
@@ -12,12 +11,10 @@ width = 0.25
 
 fig, ax = plt.subplots(figsize=(10, 6))
 
-# Membuat bar chart
 rects1 = ax.bar(x - width, accuracy, width, label='Accuracy', color='#3498db')
 rects2 = ax.bar(x, macro_f1, width, label='Macro Avg F1-Score', color='#2ecc71')
 rects3 = ax.bar(x + width, recall_netral, width, label='Recall Netral', color='#e74c3c')
 
-# Menambahkan teks dan label
 ax.set_ylabel('Scores')
 ax.set_title('Perbandingan Performa Model XGBoost antar Skenario')
 ax.set_xticks(x)
@@ -25,7 +22,6 @@ ax.set_xticklabels(scenarios)
 ax.legend(loc='lower right')
 ax.set_ylim(0, 1.0)
 
-# Menambahkan label angka di atas bar
 def autolabel(rects):
     for rect in rects:
         height = rect.get_height()

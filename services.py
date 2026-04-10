@@ -11,7 +11,6 @@ def clean_product_name(name: str) -> str:
     return name.strip()
 
 async def process_product_reviews(candidate: ProductCandidate, user_email: str, metric_id: int, brand_id: int, request: Request):
-    # 1. SETUP ASPEK (Initialize score 0 untuk setiap kategori)
     aspect_stats = {
         aspect: {"positive": 0, "total": 0} 
         for aspect in config.ASPECT_KEYWORDS.keys()
@@ -19,7 +18,6 @@ async def process_product_reviews(candidate: ProductCandidate, user_email: str, 
     
     print(f"🔍 Memulai Analisis ABSA: {candidate.name[:30]}...")
 
-    # 2. DATABASE PRE-CHECK (Model & User)
     model_db = await prisma.model.find_first(where={"modelName": "Model XGBoost (Baseline)"})
     if not model_db:
         print("❌ ERROR: Model XGBoost tidak ditemukan di database!")
@@ -30,7 +28,6 @@ async def process_product_reviews(candidate: ProductCandidate, user_email: str, 
         print(f"⚠️ User {user_email} tidak ditemukan!")
         return None
 
-    # 3. PRODUCT PERSISTENCE
     brand_name = clean_product_name(candidate.name.split()[0]) if candidate.name.strip() else "Unknown"
     product_name = clean_product_name(candidate.name)
 
@@ -49,7 +46,6 @@ async def process_product_reviews(candidate: ProductCandidate, user_email: str, 
             }
         )
 
-    # 4. NLP PREDICTION & ASPECT TAGGING LOOP
     total_reviews = len(candidate.reviews)
     if total_reviews == 0: return None
 
@@ -69,7 +65,6 @@ async def process_product_reviews(candidate: ProductCandidate, user_email: str, 
         pred_idx = ml_core.model_optimized.predict(vec)[0]
         label = ml_core.label_encoder.inverse_transform([pred_idx])[0].lower()
         
-        # Confidence Score dari XGBoost
         try:
             prob = ml_core.model_optimized.predict_proba(vec)[0]
             confidence_score = float(max(prob))
@@ -107,13 +102,11 @@ async def process_product_reviews(candidate: ProductCandidate, user_email: str, 
             "userId": user_db.id
         })
 
-    # 5. DATABASE SYNC (Batch Operations)
     if reviews_data_to_save:
         async with prisma.tx() as transaction:
             await transaction.review.delete_many(where={"productId": product_db.productId})
             await transaction.review.create_many(data=reviews_data_to_save)
 
-    # 6. CALCULATION & VERDICT GENERATION
     final_aspect_scores = {}
     for aspect, stat in aspect_stats.items():
         score = (stat["positive"] / stat["total"] * 100) if stat["total"] > 0 else 0
@@ -140,14 +133,12 @@ async def process_product_reviews(candidate: ProductCandidate, user_email: str, 
     else:
         verdict_label = "Kurang Disarankan"
 
-    # 1. Buat Analysis terlebih dahulu untuk mendapatkan ID-nya
     new_analysis = await prisma.analysis.create(
         data={
             "userId": user_db.id,
         }
     )
 
-    # 2. Buat Metric dan hubungkan ke Analysis yang baru saja dibuat
     await prisma.metric.create(
         data={
             "generalSentiment": general_sentiment_pct,
