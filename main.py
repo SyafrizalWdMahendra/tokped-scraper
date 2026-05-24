@@ -85,8 +85,7 @@ async def recommend_laptop(request: Request, data: RecommendationRequest):
 
     return {
         "user_email": data.user_email,
-        "brand_id": data.brand_id,
-        "winning_product": winner.name if hasattr(winner, 'name') else winner["name"], 
-        "details": sorted_results, 
-        "metric_id": data.metric_id
+        "analysis_type": "ASPECT_BASED",
+        "winning_product": winner.name if hasattr(winner, 'name') else winner["name"],
+        "details": sorted_results,
     }

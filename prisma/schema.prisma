@@ -100,7 +100,7 @@ model User {
   bio           String?   @db.Text
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @updatedAt @default(now())
 
   accounts Account[]
   sessions Session[]

@@ -1,0 +1,26 @@
+=======================================================
+RINGKASAN EVALUASI — XGBoost Scenario 3
+=======================================================
+
+Classification Report:
+              precision    recall  f1-score   support
+
+         nan       0.00      0.00      0.00        18
+     negatif       0.66      0.69      0.67       205
+      netral       0.32      0.21      0.25        86
+     positif       0.84      0.86      0.85       327
+
+    accuracy                           0.69       636
+   macro avg       0.45      0.44      0.44       636
+weighted avg       0.69      0.69      0.69       636
+
+
+ROC-AUC (macro)    : 0.7847
+ROC-AUC (weighted) : 0.8698
+
+Confusion Matrix:
+                 Pred: negatif  Pred: netral  Pred: positif  Pred: nan
+Aktual: negatif            141            23             21         20
+Aktual: netral              32            18             28          8
+Aktual: positif             29            13            281          4
+Aktual: nan                 11             3              4          0

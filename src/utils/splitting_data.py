@@ -1,7 +1,7 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
-nama_file = 'robust_data/dataset/trimmed_sentiment_dataset.csv' 
+nama_file = 'robust_data/dataset/dataset_fix_preprocessed.csv' 
 col_sentiment = 'Sentiment' 
 
 try:

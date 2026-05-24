@@ -15,4 +15,4 @@ COPY . .
 
 # 6. Jalankan FastAPI menggunakan Uvicorn
 # Hugging Face Spaces secara default menggunakan port 7860
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "7860"]
+CMD ["uvicorn", "run:app", "--host", "0.0.0.0", "--port", "7860"]
